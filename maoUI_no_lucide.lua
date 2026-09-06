@@ -89,6 +89,14 @@ local h=b(game:GetService"HttpService")local i=
 
 d.Heartbeat
 
+local l={
+    Icon2=function(r,u,allow)return{"rbxassetid://0",{ImageRectSize=Vector2.new(0,0),ImageRectPosition=Vector2.new(0,0)}}end,
+    Image=function(cfg)return{IconFrame=Instance.new("Frame")}end,
+    AddIcons=function(r,u)return nil end,
+    Init=function(r,u)return nil end,
+    SetIconsType=function(t)return nil end,
+}
+
 local m
 
 local p={
@@ -97,7 +105,7 @@ Localization=nil,
 CanDraggable=true,
 Theme=nil,
 Themes=nil,
-
+Icons=l,
 Signals={},
 Objects={},
 LocalizationObjects={},
@@ -500,11 +508,11 @@ p.UpdateLang()
 end
 
 function p.Icon(r,u)
-return {"rbxassetid://0", {ImageRectSize=Vector2.new(0,0), ImageRectPosition=Vector2.new(0,0)}}
+return l.Icon2(r,nil,u~=false)
 end
 
 function p.AddIcons(r,u)
-return nil
+return l.AddIcons(r,u)
 end
 
 function p.New(r,u,v)
@@ -700,7 +708,7 @@ return J
 end
 
 
-
+-- l.Init(r,"Icon")
 
 
 function p.SanitizeFilename(v)
@@ -738,8 +746,19 @@ CornerRadius=UDim.new(0,B)
 })
 })
 })
--- Lucide icon branch removed
-if string.find(v,"http")then
+if p.Icon(v)then
+L.ImageLabel:Destroy()
+
+local M=l.Image{
+Icon=v,
+Size=UDim2.new(1,0,1,0),
+Colors={
+(G and(J or"Icon")or false),
+"Button"
+}
+}.IconFrame
+M.Parent=L
+elseif string.find(v,"http")then
 local M="WindUI/"..C.."/assets/."..F.."-"..x..".png"
 local N,O=pcall(function()
 task.spawn(function()
