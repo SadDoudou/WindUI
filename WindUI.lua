@@ -4016,7 +4016,7 @@ Name="Dark",
 Accent=Color3.fromHex"#18181b",
 Dialog=Color3.fromHex"#1a1a1a",
 Outline=Color3.fromHex"#FFFFFF",
-Text=Color3.fromHex"#FFFFFF",
+Text=Color3.fromHex"#FFC0CB",
 Placeholder=Color3.fromHex"#a1a1a1",
 Background=Color3.fromHex"#101010",
 Button=Color3.fromHex"#52525b",
@@ -4038,6 +4038,7 @@ LabelBackgroundTransparency=0.83,
 ElementBackground=Color3.fromHex"#2A2A2C",
 ElementBackgroundTransparency=0,
 },
+
 }
 end end function a.w()
 
@@ -13832,66 +13833,6 @@ end
 local A
 local B
 an.Icon"minimize"
-an.Icon"maximize"
-
-aw:CreateTopbarButton(
-"Fullscreen",
-aw.Topbar.ButtonsType=="Mac"and"rbxassetid://127426072704909"or"maximize",
-function()
-aw:ToggleFullscreen()
-end,
-(aw.Topbar.ButtonsType=="Default"and 998 or 999),
-true,
-Color3.fromHex"#60C762",
-aw.Topbar.ButtonsType=="Mac"and 9 or nil
-)
-
-local function SetSize(C)
-ap(aw.UIElements.Main,0.45,{
-Size=not aw.IsFullscreen and B or UDim2.new(
-0,
-(av.WindUI.ScreenGui.AbsoluteSize.X-20)/av.WindUI.UIScale,
-0,
-(av.WindUI.ScreenGui.AbsoluteSize.Y-20-52)/av.WindUI.UIScale
-),
-},Enum.EasingStyle.Quint,Enum.EasingDirection.Out):Play()
-
-ap(
-aw.UIElements.Main,
-0.45,
-{Position=not aw.IsFullscreen and A or UDim2.new(0.5,0,0.5,26)},
-Enum.EasingStyle.Quint,
-Enum.EasingDirection.Out
-):Play()
-end
-
-function aw.ToggleFullscreen(C)
-local F=aw.IsFullscreen
-
-z:Set(F)
-
-if not F then
-A=aw.UIElements.Main.Position
-B=aw.UIElements.Main.Size
-
-aw.CanResize=false
-else
-if aw.Resizable then
-aw.CanResize=true
-end
-end
-
-aw.IsFullscreen=not F
-
-SetSize(true)
-end
-
-an.AddSignal(av.WindUI.ScreenGui:GetPropertyChangedSignal"AbsoluteSize",function()
-if aw.IsFullscreen then
-SetSize()
-end
-end)
-
 aw:CreateTopbarButton("Minimize","minus",function()
 if aw.Close then
 aw:Close()
