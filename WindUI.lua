@@ -1597,6 +1597,71 @@ end
 return nil,4
 end
 
+function r.Snow(u,v)
+v=v or{}
+local w=v.Count or 40
+local x=v.Size or 6
+local z=v.Transparency or 0.3
+local A=v.ZIndex or 200
+local S=v.Diagonal or false
+local T=v.Speed or 0.18
+local B=Instance.new"Frame"
+B.Size=UDim2.new(1,0,1,0)
+B.BackgroundTransparency=1
+B.ClipsDescendants=true
+B.ZIndex=A
+B.Parent=u
+local C={}
+for D=1,w do
+local E=Instance.new"TextLabel"
+E.Text=utf8.char(0x2022)
+E.TextColor3=Color3.new(1,1,1)
+E.TextTransparency=z*math.random(50,130)/100
+E.TextSize=x
+E.Font=Enum.Font.GothamMedium
+E.BackgroundTransparency=1
+E.Size=UDim2.new(0,E.TextSize,0,E.TextSize)
+E.Parent=B
+if S then
+E.Position=UDim2.new(math.random(60,100)/100,0,math.random(-15,60)/100,0)
+C[D]={Obj=E,X=math.random(60,100)/100,Y=math.random(-15,60)/100,VX=-(T*math.random(40,90)/100),VY=T*math.random(80,160)/100}
+else
+E.Position=UDim2.new(math.random(),0,math.random(-15,100)/100,0)
+C[D]={Obj=E,X=math.random(),Y=math.random(-15,100)/100,VX=math.random(-120,120)/1000,VY=T*math.random(70,170)/100}
+end
+end
+local F=d.RenderStepped:Connect(function(G)
+if not B.Parent then
+F:Disconnect()
+return
+end
+for H,I in next,C do
+I.Y=I.Y+I.VY*G
+I.X=I.X+I.VX*G
+if I.Y>1.05 or I.X< -0.05 or I.X>1.05 then
+if S then
+I.Y=math.random(-15,0)/100
+I.X=math.random(70,110)/100
+I.VY=T*math.random(80,160)/100
+I.VX=-(T*math.random(40,90)/100)
+else
+I.Y=math.random(-15,0)/100
+I.X=math.random()
+I.VY=T*math.random(70,170)/100
+I.VX=math.random(-120,120)/1000
+end
+end
+I.Obj.Position=UDim2.new(I.X,0,I.Y,0)
+end
+end)
+local K={}
+function K.Stop()
+F:Disconnect()
+B:Destroy()
+end
+return K
+end
+
 return r end function a.e()
 
 local b={}
@@ -3004,6 +3069,8 @@ LabelBackgroundTransparency=0.83,
 
 ElementBackground=Color3.fromHex"#2A2A2C",
 ElementBackgroundTransparency=0,
+Snowflake=Color3.fromHex"#FFFFFF",
+SnowflakeTransparency=0.3,
 },
 
 }
@@ -3989,6 +4056,14 @@ local ao=ab.Drag(al)
 
 function ag.Visible(ap,aq)
 al.Visible=aq
+if aq then
+if not ag.Snow then
+ag.Snow=ab.Snow(al,{ZIndex=200,Count=16,Speed=0.2,Diagonal=true})
+end
+elseif ag.Snow then
+ag.Snow:Stop()
+ag.Snow=nil
+end
 end
 
 function ag.SetScale(ap,aq)
@@ -10572,6 +10647,8 @@ Visible=ar.ShowTabTitle or false,
 ao.Containers[as]=ar.UIElements.ContainerFrameCanvas
 ao.Tabs[as]=ar
 
+ar.Snow=ak.Snow(ar.UIElements.Main,{ZIndex=100,Count=28,Speed=0.4})
+
 ar.ContainerFrame=ar.UIElements.ContainerFrameCanvas
 
 ak.AddSignal(ar.UIElements.Main.MouseButton1Click,function()
@@ -10851,6 +10928,32 @@ ImageTransparency="TabIconTransparencyActive",
 },0.15)
 end
 ao.Tabs[aq].Selected=true
+
+task.spawn(function()
+local B=ao.Tabs[aq].UIElements.Main
+for D=1,4 do
+local C=D%2==0 and 0.02 or -0.02
+ak.Tween(B,0.06,{AnchorPoint=Vector2.new(C,0)},Enum.EasingStyle.Quad,Enum.EasingDirection.Out):Play()
+task.wait(0.06)
+end
+ak.Tween(B,0.06,{AnchorPoint=Vector2.new(0,0)},Enum.EasingStyle.Quad,Enum.EasingDirection.Out):Play()
+while ao.SelectedTab==aq do
+task.wait(3)
+if ao.SelectedTab~=aq then
+break
+end
+local N=0
+local M=true
+while N<1 and ao.SelectedTab==aq do
+B.AnchorPoint=Vector2.new(M and 0.08 or -0.08,0)
+M=not M
+task.wait(0.05)
+N=N+0.05
+end
+B.AnchorPoint=Vector2.new(0,0)
+end
+B.AnchorPoint=Vector2.new(0,0)
+end)
 
 task.spawn(function()
 for ar,as in next,ao.Containers do
@@ -12952,6 +13055,11 @@ aw.UIElements.Main:WaitForChild"Main".Visible=true
 
 av.WindUI:ToggleAcrylic(true)
 
+if aw.Snow then
+aw.Snow:Stop()
+end
+aw.Snow=an.Snow(aw.UIElements.Main,{ZIndex=500,Count=70,Speed=0.2})
+
 end)
 end
 function aw.Close(C)
@@ -12968,6 +13076,11 @@ end)
 end
 
 av.WindUI:ToggleAcrylic(false)
+
+if aw.Snow then
+aw.Snow:Stop()
+aw.Snow=nil
+end
 
 if aw.UIElements.Main and aw.UIElements.Main:WaitForChild"Main"then
 aw.UIElements.Main.Main.Visible=false
